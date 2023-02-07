@@ -5,8 +5,7 @@ on:
   push:
     branches:
       - master
-env: 
-  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
       # note that your "main" branch might be called main instead of master
 
 jobs:
@@ -35,4 +34,6 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@master
         with: 
           run: flyctl deploy --remote-only
+        env: 
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 ...
