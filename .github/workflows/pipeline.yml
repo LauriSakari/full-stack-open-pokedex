@@ -29,42 +29,46 @@ jobs:
         run: npm run build
       - name: test
         run: npm test
-      - name: github context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: commits
-        env:
-          COMMITS: ${{ toJson(github.event.commits) }}
-        run: echo "$COMMITS"
-      - name: commit messages
-        env:
-          COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
-        run: echo "$COMMIT_MESSAGES"
-      # - name: e2e tests
-      #   uses: cypress-io/github-action@v2
-      #   with:
-      #     command: npm run test:e2e
-      #     start: npm run start-prod
-      #     wait-on: http://localhost:5000
+      # - name: github context
+      #   env:
+      #     GITHUB_CONTEXT: ${{ toJson(github) }}
+      #   run: echo "$GITHUB_CONTEXT"
+      # - name: commits
+      #   env:
+      #     COMMITS: ${{ toJson(github.event.commits) }}
+      #   run: echo "$COMMITS"
+      # - name: commit messages
+      #   env:
+      #     COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
+      #   run: echo "$COMMIT_MESSAGES"
+      - name: e2e tests
+        uses: cypress-io/github-action@v2
+        with:
+          command: npm run test:e2e
+          start: npm run start-prod
+          wait-on: http://localhost:5000
       - name: Setup fly.io config
         if: ${{ github.event_name == 'push' && !contains(env.JOINT_MESSAGES, '#skip')}}
         env:
           JOINT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) }}
         uses: superfly/flyctl-actions/setup-flyctl@master
-  #     - name: Deploy
-  #       if: ${{ github.event_name == 'push' }}
-  #       run: flyctl deploy --remote-only
-  # tag_release:
-  #   needs: [simple_deployment_pipeline]
-  #   if: ${{ github.event_name == 'push' }}
-  #   permissions: write-all
-  #   runs-on: ubuntu-20.04
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Bump version and push tag
-  #       uses: anothrNick/github-tag-action@1.36.0
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #         DEFAULT_BUMP: patch
+      - name: Deploy
+        if: ${{ github.event_name == 'push' && !contains(env.JOINT_MESSAGES, '#skip'}}
+        env:
+          JOINT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) }}
+        run: flyctl deploy --remote-only
+  tag_release:
+    needs: [simple_deployment_pipeline]
+    if: ${{ github.event_name == 'push' }}
+    env:
+      JOINT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) && !contains(env.JOINT_MESSAGES, '#skip' }}
+    permissions: write-all
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.36.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
 ...
