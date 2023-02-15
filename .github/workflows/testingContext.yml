@@ -30,6 +30,6 @@ jobs:
       - name: search for keyword
         env:
           JOINT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) }}
-        if: contains('testi string skip löytyykö', 'skip')
+        if: contains($JOINT_MESSAGES, '#skip')
         run: echo "true"
 ...
