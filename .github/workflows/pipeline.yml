@@ -37,14 +37,14 @@ jobs:
           start: npm run start-prod
           wait-on: http://localhost:5000
       - name: Setup fly.io config
-        if: ${{ github.event_name == 'push' }} || ${{ !contains(env.JOINT_MESSAGES, '#skip') }}
+        if: ${{ github.event_name == 'push' }} && ${{ !contains(env.JOINT_MESSAGES, '#skip') }}
         uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Deploy
-        if: ${{ github.event_name == 'push' }} || ${{ !contains(env.JOINT_MESSAGES, '#skip') }}
+        if: ${{ github.event_name == 'push' }} && ${{ !contains(env.JOINT_MESSAGES, '#skip') }}
         run: flyctl deploy --remote-only
   tag_release:
     needs: [simple_deployment_pipeline]
-    if: ${{ github.event_name == 'push' }} || ${{ !contains(env.JOINT_MESSAGES, '#skip') }}
+    if: ${{ github.event_name == 'push' }} && ${{ !contains(env.JOINT_MESSAGES, '#skip') }}
     permissions: write-all
     runs-on: ubuntu-20.04
     steps:
