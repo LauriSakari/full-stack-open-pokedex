@@ -35,22 +35,22 @@ jobs:
           command: npm run test:e2e
           start: npm run start-prod
           wait-on: http://localhost:5000
-      - name: Setup fly.io config
-        if: ${{ github.event_name == 'push' }}
-        uses: superfly/flyctl-actions/setup-flyctl@master
-      - name: Deploy
-        if: ${{ github.event_name == 'push' }}
-        run: flyctl deploy --remote-only
-  tag_release:
-    needs: [simple_deployment_pipeline]
-    if: ${{ github.event_name == 'push' }}
-    permissions: write-all
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3
-      - name: Bump version and push tag
-        uses: anothrNick/github-tag-action@1.36.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEFAULT_BUMP: patch
+  #     - name: Setup fly.io config
+  #       if: ${{ github.event_name == 'push' }}
+  #       uses: superfly/flyctl-actions/setup-flyctl@master
+  #     - name: Deploy
+  #       if: ${{ github.event_name == 'push' }}
+  #       run: flyctl deploy --remote-only
+  # tag_release:
+  #   needs: [simple_deployment_pipeline]
+  #   if: ${{ github.event_name == 'push' }}
+  #   permissions: write-all
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Bump version and push tag
+  #       uses: anothrNick/github-tag-action@1.36.0
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         DEFAULT_BUMP: patch
 ...
