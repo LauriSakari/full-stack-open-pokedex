@@ -27,6 +27,7 @@ jobs:
           COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
         run: echo "$COMMIT_MESSAGES"
       - name: search for keyword
-        if: contains(${{ !env.JOINT_MESSAGES }}, '#skip')
-        run: echo "sisältää hakusanan eli tulostetaan false"
+        env:
+          SHOULD_BE_SKIPPED: contains(env.JOINT_MESSAGES, '#skip')
+        run: echo "$SHOULD_BE_SKIPPED"
 ...
