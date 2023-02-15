@@ -30,6 +30,6 @@ jobs:
       - name: search for keyword
         env:
           JOINT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) }}
-        if: contains(env.JOINT_MESSAGES, 'lauri')
+        if: contains(env.JOINT_MESSAGES, 'set to fail')
         run: echo "true"
 ...
