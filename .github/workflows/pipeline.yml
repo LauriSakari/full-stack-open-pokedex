@@ -47,7 +47,6 @@ jobs:
   tag_release:
     needs: [simple_deployment_pipeline]
     if: ${{ github.event_name == 'push' }}
-    if: ${{ !contains(env.JOINT_MESSAGES, '#skip') }}
     permissions: write-all
     runs-on: ubuntu-20.04
     steps:
