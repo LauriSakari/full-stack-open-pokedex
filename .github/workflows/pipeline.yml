@@ -59,9 +59,9 @@ jobs:
         run: flyctl deploy --remote-only
   tag_release:
     needs: [simple_deployment_pipeline]
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' && !contains(env.JOINT_MESSAGES, '#skip') }}
     env:
-      JOINT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) && !contains(env.JOINT_MESSAGES, '#skip') }}
+      JOINT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) }}
     permissions: write-all
     runs-on: ubuntu-20.04
     steps:
