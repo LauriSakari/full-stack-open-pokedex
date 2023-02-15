@@ -6,6 +6,7 @@ on:
     branches:
       - master
 
+#kokeilu ilman #skip avainsanaa
 env: 
   JOINT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) }}
 
