@@ -6,6 +6,9 @@ on:
     branches:
       - master
 
+env: 
+  JOINT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) }}
+
 jobs:
   a_test_job:
     runs-on: ubuntu-20.04
@@ -23,13 +26,7 @@ jobs:
         env:
           COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
         run: echo "$COMMIT_MESSAGES"
-      - name: join messages
-        env:
-          JOINT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) }}
-        run: echo "$JOINT_MESSAGES"
       - name: search for keyword
-        env:
-          JOINT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) }}
-        if: contains(env.JOINT_MESSAGES, 'set to fail')
+        if: contains(env.JOINT_MESSAGES, '#skip')
         run: echo "true"
 ...
