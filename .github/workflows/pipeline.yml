@@ -53,15 +53,15 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
-      # - name: Test Failure
-      #   uses: rjstone/discord-webhook-notify@v1
-      #   if: failure()
-      #   with:
-      #     severity: error
-      #     text: Build failed
-      #     description: commit
-      #     details: ${{ github }}by ${{ github.actor }} broke the build
-      #     webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Test Failure
+        uses: rjstone/discord-webhook-notify@v1
+        if: failure()
+        with:
+          severity: error
+          text: Build failed
+          description: commit
+          details: ${{ github.event.commits.url }}by ${{ github.actor }} broke the build
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
   tag_release:
     needs: [simple_deployment_pipeline]
     if: ${{ github.event_name == 'push' }}
@@ -91,6 +91,6 @@ jobs:
           severity: error
           text: Build failed
           description: commit
-          details: ${{ github.repositoryUrl }} by ${{ github.actor }} broke the build
+          details: ${{ github.event.commits.url }} by ${{ github.actor }} broke the build
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 ...
