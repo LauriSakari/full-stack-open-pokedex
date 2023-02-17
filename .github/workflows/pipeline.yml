@@ -28,9 +28,13 @@ jobs:
       - name: build
         run: npm run build
       - name: echo
-        run: echo github.event.commits
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
       - name: echo
-        run: echo github.event.commits.url
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
       - name: test
         run: npm test
       - name: e2e tests
