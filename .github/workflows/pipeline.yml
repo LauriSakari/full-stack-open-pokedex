@@ -64,7 +64,9 @@ jobs:
         if: success()
         with:
           severity: info
-          details: Test Succeeded!
+          text: A new version of pokedex deployed
+          description: to https://empty-field-4404.fly.dev/ by ${{ github.actor }}
+          footer: "severity: informational"
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
       - name: Test Failure
         uses: rjstone/discord-webhook-notify@v1
