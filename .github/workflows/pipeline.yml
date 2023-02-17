@@ -45,6 +45,15 @@ jobs:
         env:
           JOINT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) }}
         run: flyctl deploy --remote-only
+      - name: Test Failure
+        uses: rjstone/discord-webhook-notify@v1
+        if: failure()
+        with:
+          severity: error
+          text: Build failed
+          description: commit
+          details: ${{ github.repositoryUrl }} by ${{ github.actor }} broke the build
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
   tag_release:
     needs: [simple_deployment_pipeline]
     if: ${{ github.event_name == 'push' }}
