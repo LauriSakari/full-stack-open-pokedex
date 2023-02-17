@@ -28,9 +28,9 @@ jobs:
       - name: build
         run: npm run build
       - name: echo
-        run: echo ${{ github.event.commits }}
+        run: echo github.event.commits
       - name: echo
-        run: echo ${{ github.event.commits.url }}
+        run: echo github.event.commits.url
       - name: test
         run: npm test
       - name: e2e tests
@@ -58,7 +58,9 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
       - name: echo
-        run: echo ${{ github.event.commits.url }}
+        env:
+          COMMITS: ${{ toJson(github.event.commits) }}
+        run: echo "$COMMITS"
       # - name: Test Failure
       #   uses: rjstone/discord-webhook-notify@v1
       #   if: failure()
