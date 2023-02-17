@@ -66,13 +66,14 @@ jobs:
           severity: info
           text: A new version of pokedex deployed
           description: to https://empty-field-4404.fly.dev/ by ${{ github.actor }}
-          footer: "severity: informational"
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
       - name: Test Failure
         uses: rjstone/discord-webhook-notify@v1
         if: failure()
         with:
           severity: error
-          details: Test Failed!
+          text: Build failed
+          description: commit
+          details: ${{ github.repositoryUrl }} by ${{ github.actor }} broke the build
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 ...
