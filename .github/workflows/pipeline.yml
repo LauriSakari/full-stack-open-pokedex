@@ -60,7 +60,7 @@ jobs:
           DEFAULT_BUMP: patch
           JOINT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) }}
   send_notification:
-    [simple_deployment_pipeline, tag_release]
+    needs: [simple_deployment_pipeline, tag_release]
     - name: Test Success
     uses: rjstone/discord-webhook-notify@v1
     if: success()
