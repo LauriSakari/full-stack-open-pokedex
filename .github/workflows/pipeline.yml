@@ -35,6 +35,10 @@ jobs:
           command: npm run test:e2e
           start: npm run start-prod
           wait-on: http://localhost:5000
+      - name: github context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
       - name: Setup fly.io config
         if: ${{ github.event_name == 'push' && !contains(env.JOINT_MESSAGES, '#skip') }}
         env:
@@ -45,15 +49,19 @@ jobs:
         env:
           JOINT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) }}
         run: flyctl deploy --remote-only
-      - name: Test Failure
-        uses: rjstone/discord-webhook-notify@v1
-        if: failure()
-        with:
-          severity: error
-          text: Build failed
-          description: commit
-          details: ${{ github.repositoryUrl }} by ${{ github.actor }} broke the build
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: github context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      # - name: Test Failure
+      #   uses: rjstone/discord-webhook-notify@v1
+      #   if: failure()
+      #   with:
+      #     severity: error
+      #     text: Build failed
+      #     description: commit
+      #     details: ${{ github }}by ${{ github.actor }} broke the build
+      #     webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
   tag_release:
     needs: [simple_deployment_pipeline]
     if: ${{ github.event_name == 'push' }}
