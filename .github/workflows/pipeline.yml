@@ -33,7 +33,7 @@ jobs:
         run: echo "$GITHUB_CONTEXT"
       - name: echo
         env:
-          GITHUB_EVENT: ${{ toJson(github.event) }}
+          GITHUB_EVENT: ${{ toJson(github.event.commits.url) }}
         run: echo "$GITHUB_EVENT"
       - name: test
         run: npm test
