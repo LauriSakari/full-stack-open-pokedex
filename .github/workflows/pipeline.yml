@@ -63,7 +63,7 @@ jobs:
         run: echo "$GITHUB_CONTEXT"
       - name: echo commits
         env:
-          COMMITS: ${{ toJson(github.event.commits) }}
+          COMMITS: ${{ toJson(github.event.commits.url) }}
         run: echo "$COMMITS"
       # - name: Test Failure
       #   uses: rjstone/discord-webhook-notify@v1
