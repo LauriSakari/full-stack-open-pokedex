@@ -27,14 +27,6 @@ jobs:
         run: npm run eslint
       - name: build
         run: npm run build
-      - name: echo
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github.context) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: echo
-        env:
-          GITHUB_EVENT: ${{ toJson(github.event.head_commit.url) }}
-        run: echo "$GITHUB_EVENT"
       - name: test
         run: npm test
       - name: e2e tests
@@ -47,33 +39,25 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
-      # - name: Setup fly.io config
-      #   if: ${{ github.event_name == 'push' && !contains(env.JOINT_MESSAGES, '#skip') }}
-      #   env:
-      #     JOINT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) }}
-      #   uses: superfly/flyctl-actions/setup-flyctl@master
-      # - name: Deploy
-      #   if: ${{ github.event_name == 'push' && !contains(env.JOINT_MESSAGES, '#skip') }}
-      #   env:
-      #     JOINT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) }}
-      #   run: flyctl deploy --remote-only
-      - name: github context
+      - name: Setup fly.io config
+        if: ${{ github.event_name == 'push' && !contains(env.JOINT_MESSAGES, '#skip') }}
         env:
-          GITHUB_CONTEXT: ${{ toJson(github.event) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: echo commits
+          JOINT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) }}
+        uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Deploy
+        if: ${{ github.event_name == 'push' && !contains(env.JOINT_MESSAGES, '#skip') }}
         env:
-          COMMITS: ${{ toJson(github.event.commits.url) }}
-        run: echo "$COMMITS"
-      # - name: Test Failure
-      #   uses: rjstone/discord-webhook-notify@v1
-      #   if: failure()
-      #   with:
-      #     severity: error
-      #     text: Build failed
-      #     description: commit
-      #     details: ${{ github.event.commits.url }} by ${{ github.actor }} broke the build
-      #     webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          JOINT_MESSAGES: ${{ toJson(join(github.event.commits.*.message)) }}
+        run: flyctl deploy --remote-only
+      - name: Test Failure
+        uses: rjstone/discord-webhook-notify@v1
+        if: failure()
+        with:
+          severity: error
+          text: Build failed
+          description: commit
+          details: ${{ github.event.commits.url }} by ${{ github.actor }} broke the build
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
   tag_release:
     needs: [simple_deployment_pipeline]
     if: ${{ github.event_name == 'push' }}
@@ -103,6 +87,6 @@ jobs:
           severity: error
           text: Build failed
           description: commit
-          details: ${{ github.event.commits.url }} by ${{ github.actor }} broke the build
+          details: ${{ github.event.head_commit.url }} by ${{ github.actor }} broke the build
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 ...
